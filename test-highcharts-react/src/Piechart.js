@@ -8,7 +8,7 @@ class PieChart extends React.Component {
     
   };
 
-const pieChart = {
+pieChart = {
   title: {
     text: ""
   },
@@ -25,9 +25,10 @@ const pieChart = {
 // Render app with demo chart
     render() {
     return (
-
-    <h2>Highcharts</h2>
-    <Chart options={pieChart} highcharts={Highcharts} />
+    <HighchartsReact
+    highcharts={Highcharts}
+    options={pieChart}
+  />
     )
   }
 

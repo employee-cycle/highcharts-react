@@ -10,16 +10,16 @@ class BarChart extends React.Component {
   };
 
 
- const barChart = {
+ barChart = {
     chart: {
         type: 'column'
     },
     title: {
     text: "Employees by Company"
   },
-   data: {
-csvURL: {this.props.data}
-},
+series: [{
+  data: []
+}],
  plotOptions: {
         column: {
             pointPadding: 0.2,
@@ -29,9 +29,22 @@ csvURL: {this.props.data}
   
 };
 
+var arr = new Array(names.length);
+      for (i = 0; i < name.length; i++) {
+        arr[i] = [names[i], count[i]];
+      }
+      options.series[0].data = arr;
+
+
+
+
+
     render() {
     return (
-     <Chart options={barChart} highcharts={Highcharts} />
+        <HighchartsReact
+    highcharts={Highcharts}
+    options={barChart}
+  />
     )
   }
 }
