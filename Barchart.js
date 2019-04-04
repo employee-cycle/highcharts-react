@@ -1,35 +1,37 @@
+import React, { Component } from "react";
+import { PropTypes } from "prop-types";
+import { render } from "react-dom";
 
-import React from 'react'
 
 class BarChart extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     
   };
- 
-  
-barchart = Highcharts.chart('barchartid', {
+
+
+ const barChart = {
     chart: {
         type: 'column'
     },
     title: {
-        text: 'Number of Employees by Company'
-    },
-    data: {
+    text: "Employees by Company"
+  },
+   data: {
 csvURL: {this.props.data}
 },
-    plotOptions: {
+ plotOptions: {
         column: {
             pointPadding: 0.2,
             borderWidth: 0
         }
     }
-});
-
   
-  render() {
+};
+
+    render() {
     return (
-      <div id="barchartid"></div>
+     <Chart options={barChart} highcharts={Highcharts} />
     )
   }
 }
