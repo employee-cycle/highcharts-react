@@ -5,9 +5,18 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import ReactDOM from 'react-dom';
 import './index.css';
+//import highchartsExporting from 'highcharts-exporting';
+//import highchartsMore from 'highcharts-more';
+import HC_more from 'highcharts/highcharts-more.src' //module
+//import HC_Exporting from 'highcharts/highcharts-exporting.src' //module
+//HC_Exporting(Highcharts) //init module
 import highchartsGauge from "highcharts/modules/solid-gauge";
 
+HC_more(Highcharts) //init module
+
 highchartsGauge(Highcharts);
+//highchartsExporting(Highcharts);
+//highchartsMore(Highcharts);
 
 
 class GaugeChart extends React.Component {
@@ -18,9 +27,7 @@ class GaugeChart extends React.Component {
         type: 'solidgauge'
     },
 
-    title: {
-	text: "Speed - Gauge Map"
-    },
+    title: null,
 
     pane: {
         center: ['50%', '85%'],
@@ -28,7 +35,8 @@ class GaugeChart extends React.Component {
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
             innerRadius: '60%',
             outerRadius: '100%',
             shape: 'arc'
@@ -38,16 +46,18 @@ class GaugeChart extends React.Component {
     tooltip: {
         enabled: false
     },
+
+    // the value axis
     yAxis: {
-        min: 0,
+         min: 0,
         max: this.props.max,
         title: {
             text: this.props.title
         },
         stops: [
-            [0.1, '#00BC6F'], // green
-            [0.5, '#00BC6F'], // green
-            [0.9, '#EB1414'] // red
+            [4.9, '#7ED321'], // green
+            [3, '#DDDF0D'], // yellow
+            [1, '#EB1414'] // red
         ],
         lineWidth: 0,
         minorTickInterval: null,
@@ -60,31 +70,25 @@ class GaugeChart extends React.Component {
         }
     },
 
+    series: [{
+        name: null,
+        data: this.props.data,
+        dataLabels: {
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px; color:white">{y}</span><br/>' +
+                '</div>'
+        }
+    }],
     plotOptions: {
         solidgauge: {
             dataLabels: {
                 y: 5,
                 borderWidth: 0,
-                useHTML: true,
-		enabled: true,
-		style: {
-		    color: '#F0F0F0'
-                }
+                useHTML: true
             }
         }
-    },
-     series: [{
-        name: this.props.title,
-        data: this.props.data,
-        dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-        ('#F0F0F0') + '">{y}</span><br/>' +
-        '<span style="font-size:12px;color:silver">km/h</span></div>'
-        },
-        tooltip: {
-            valueSuffix: ' km/h'
-        }
-    }]
+    }
 };
 
 

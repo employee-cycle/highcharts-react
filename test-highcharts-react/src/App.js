@@ -16,8 +16,16 @@ import TreeMap from './TreeMap'
 import GaugeChart from './GaugeChart'
 import Histogram from './Histogram'
 import * as serviceWorker from './serviceWorker';
+//import highchartsMore from 'highcharts-more';
+//import highchartsExporting from 'highcharts-exporting';
+
+
+
+//highchartsExporting(Highcharts);
+//highchartsMore(Highcharts);
 
 var classNames = require('classnames');
+
 
 const middleDivStyle = {
   backgroundColor: '#282828',
@@ -260,7 +268,14 @@ class App extends React.Component {
             <div style={middleDivStyle}></div>
             <SideBar series={this.state.sidebarseries} title={this.state.sidebartitle} categories={this.state.sidebarcategories} />
             <div style={middleDivStyle}></div>
+            <div className={'row'}>
+            <div className={halfclasses}>
             <FunnelChart data={this.state.funneldata} title={this.state.funneltitle}  />
+            </div>
+            <div className={halfclasses}>
+             <GaugeChart data={this.state.gaugedata} title={this.state.gaugetitle} max={this.state.gaugemax} />
+            </div>
+            </div>
             <div style={middleDivStyle}></div>
             <HeatMap xcat={this.state.heatmapxcat} ycat={this.state.heatmapycat} data={this.state.heatmapdata} title={this.state.heatmaptitle}  />
             <div style={middleDivStyle}></div>
