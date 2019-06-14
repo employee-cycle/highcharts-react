@@ -1,0 +1,332 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<script src="https://code.highcharts.com/modules/treemap.js"></script>
+
+<div class="container">
+<div class="row">
+<h3> Employee Cycle Test Chart </h3>
+<p>This is connected to the JSON output at https://ecycle-neo.herokuapp.com/people</p>
+
+    <button id="update-report" type="button" onclick="updateReports()" class="btn btn-primary">
+        Update Chart
+    </button>
+</div>
+</div>
+
+
+<div id="barchartid"></div>
+
+<div id="stackedbar"></div>
+
+<div id="container-speed"></div>
+<div id="treecontainer"></div>
+
+<div id="scattercontainer"></div>
+<div>
+<p>Here we pull from the JSON file, sort, and display the companies as a list:</p>
+</div>
+<div id="list_container">
+<ul></ul>
+</div>
+
+<script>
+function updateReports() {
+ var updateButton = $("#update-report");
+ var lambdaUrl = "https://d5w89u06bk.execute-api.us-east-1.amazonaws.com/prod/dashboard/data-update";
+ var scriptUrl = "https://employeecycle-1108178549-private-files.s3.amazonaws.com/test_json_connection.py?AWSAccessKeyId=AKIAJECVFC4BEY3VGV5Q&Signature=xOoZW85A8MicWvnLYaMwLES7wY0%3D&Expires=1868084306";
+ // enter charts to CHARTLIST variable
+ var chartList = [barchart];
+
+ updateButton.attr("disabled", "disabled");
+
+ $.get(lambdaUrl, {script: scriptUrl})
+   .done(function() {
+location.reload(true);
+   }).fail(function(res) {
+     alert("ERROR: " + res.responseJSON.error);
+   }).always(function() {
+     updateButton.removeAttr("disabled");
+   });
+}
+
+var barchart = Highcharts.chart('barchartid', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Number of Employees by Company'
+    },
+    data: {
+csvURL: 'https://s3.amazonaws.com/employeecycle-1108178549-public-files/num_ppl_by_company_bar_chart.csv'
+},
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    }
+});
+
+
+
+var gaugeOptions = {
+
+    chart: {
+        type: 'solidgauge'
+    },
+
+    title: null,
+
+    pane: {
+        center: ['50%', '85%'],
+        size: '140%',
+        startAngle: -90,
+        endAngle: 90,
+        background: {
+            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+            innerRadius: '60%',
+            outerRadius: '100%',
+            shape: 'arc'
+        }
+    },
+
+    tooltip: {
+        enabled: false
+    },
+
+    // the value axis
+    yAxis: {
+        stops: [
+            [0.1, '#55BF3B'], // green
+            [0.5, '#DDDF0D'], // yellow
+            [0.9, '#DF5353'] // red
+        ],
+        lineWidth: 0,
+        minorTickInterval: null,
+        tickAmount: 2,
+        title: {
+            y: -70
+        },
+        labels: {
+            y: 16
+        }
+    },
+
+    plotOptions: {
+        solidgauge: {
+            dataLabels: {
+                y: 5,
+                borderWidth: 0,
+                useHTML: true
+            }
+        }
+    }
+};
+
+// The speed gauge
+var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
+    yAxis: {
+        min: 0,
+        max: 4,
+        title: {
+            text: 'Job Rating'
+        }
+    },
+
+    credits: {
+        enabled: false
+    },
+
+    series: [{
+        name: 'Avg. Rating',
+        data: [2.7],
+        dataLabels: {
+            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+                   '<span style="font-size:12px;color:silver">Job Rating</span></div>'
+        }
+    }]
+
+}));
+
+
+Highcharts.chart('stackedbar', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Stacked column chart'
+    },
+    xAxis: {
+        categories: ['Sales', 'R&D', 'Marketing']
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Gender breakdown by department'
+        }
+    },
+    tooltip: {
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+        shared: true
+    },
+    plotOptions: {
+        column: {
+            stacking: 'percent'
+        }
+    },
+    series: [{
+        name: 'Female',
+        data: [20, 379, 189]
+    }, {
+        name: 'Male',
+        data: [43, 582, 257]
+    }]
+});
+
+
+
+Highcharts.chart('treecontainer', {
+    colorAxis: {
+        minColor: '#FFFFFF',
+        maxColor: Highcharts.getOptions().colors[0]
+    },
+    series: [{
+        type: 'treemap',
+        layoutAlgorithm: 'squarified',
+        data: [{
+            name: 'Sales',
+            value: 6,
+            colorValue: 1
+        }, {
+            name: 'IT/Tech',
+            value: 6,
+            colorValue: 2
+        }, {
+            name: 'Marketing',
+            value: 4,
+            colorValue: 3
+        }, {
+            name: 'Customer Support',
+            value: 3,
+            colorValue: 4
+        }, {
+            name: 'Management',
+            value: 2,
+            colorValue: 5
+        }, {
+            name: 'HR',
+            value: 2,
+            colorValue: 6
+        }]
+    }],
+    title: {
+        text: 'Spending by Department'
+    }
+});
+
+
+Highcharts.chart('scattercontainer', {
+    chart: {
+        type: 'scatter',
+        zoomType: 'xy'
+    },
+    title: {
+        text: 'Satisfaction by Department'
+    },
+    xAxis: {
+        visible: false,
+        title: {
+            enabled: true,
+            text: 'Height (cm)'
+        },
+        startOnTick: true,
+        endOnTick: true,
+        showLastLabel: true
+    },
+    yAxis: {
+        title: {
+            text: 'Satisfaction Rating'
+        }
+    },
+    legend: {
+visible: false,
+        layout: 'vertical',
+        align: 'left',
+        verticalAlign: 'top',
+        x: 100,
+        y: 70,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
+        borderWidth: 1
+    },
+    plotOptions: {
+        scatter: {
+            marker: {
+                radius: 5,
+                states: {
+                    hover: {
+                        enabled: true,
+                        lineColor: 'rgb(100,100,100)'
+                    }
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'DotPlot',
+        color: 'rgba(119, 152, 191, .5)',
+        data: [["Sales", 65.6], ["IT", 71.8], ["Marketing", 80.7], ["HR", 72.6], ["Service", 78.8],
+            ["Management", 74.8]]
+    }],
+   annotations: [{
+        labels: [
+{
+            point: { x: 0, y: 65.6 },
+            text: "Sales"
+        },
+{
+            point: { x: 1, y: 71.8 },
+            text: "IT"
+        },
+{
+            point: { x: 2, y: 80.7 },
+            text: "Marketing"
+        },
+{
+            point: { x: 3, y: 72.6 },
+            text: "HR"
+        },
+{
+            point: { x: 4, y: 78.8 },
+            text: "Service"
+        },
+{
+            point: { x: 5, y: 74.8 },
+            text: "Management"
+        }
+]
+    }]
+});
+
+var xhReq = new XMLHttpRequest();
+xhReq.open("GET", 'https://ecycle-neo.herokuapp.com/people', false);
+xhReq.send(null);
+var list_data = JSON.parse(xhReq.responseText);
+
+var i
+var data_list = []
+for (i = 0; i < list_data.length; i++){
+    data_list.push(list_data[i].company);
+}
+
+data_list.sort()
+
+for (i = 0; i < data_list.length; i++){
+    $("#list_container ul").append('<li>'+data_list[i]+'</li>');
+}
+</script>

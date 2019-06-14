@@ -1,25 +1,27 @@
 import React, { Component } from "react";
 import { PropTypes } from "prop-types";
 import { render } from "react-dom";
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import ReactDOM from 'react-dom';
+import './index.css';
+
+
 
 
 class BarChart extends React.Component {
-  static propTypes = {
-    data: PropTypes.array.isRequired,
-    
-  };
 
-
- barChart = {
+  state = {
     chart: {
         type: 'column'
     },
     title: {
-    text: "Employees by Company"
+    text: this.props.title
   },
 series: [{
-  data: []
-}],
+        name: 'Salary',
+        data: this.props.data
+    }],
  plotOptions: {
         column: {
             pointPadding: 0.2,
@@ -27,27 +29,31 @@ series: [{
         }
     }
   
-};
+}
 
-var arr = new Array(names.length);
+
+/*arr = new Array(names.length);
       for (i = 0; i < name.length; i++) {
         arr[i] = [names[i], count[i]];
       }
       options.series[0].data = arr;
 
-
-
-
-
-    render() {
-    return (
-        <HighchartsReact
-    highcharts={Highcharts}
-    options={barChart}
-  />
-    )
+const BarChart = () => (
+  <div>
+    <HighchartsReact highcharts={Highcharts} options={barChartOptions} />
+  </div>
+);*/
+  render() {
+    return(
+        <div>
+    <HighchartsReact highcharts={Highcharts} options={this.state} />
+  </div>
+      );
   }
 }
-
-export default BarChart
-
+BarChart.propTypes = {
+    data: PropTypes.array,
+    title: PropTypes.string,
+    
+  };
+export default BarChart;
